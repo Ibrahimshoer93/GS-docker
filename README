@@ -1,0 +1,20 @@
+Usage:
+linux:
+curl -X POST http://192.168.168.141:5000/run-training -H "Content-Type: application/json" -d '{"folder_path": "folder_name"}'
+Win:
+curl -X POST http://192.168.168.141:5000/run-training -H "Content-Type: application/json" -d "{\"folder_path\": \"folder_name\"}"
+
+"folder_name" should be in capoom_storage/Projects/gs-data/
+it should include images/ and sparse/
+setup:
+sudo docker build -t gaussian-splat-api .
+
+sudo docker run -it --gpus all -p 5000:5000 -v /mnt/capoom_storage/Projects/gs-data/:/workspace/data gaussian-splat-api
+
+
+if submodules are not installed properly:
+sudo docker exec -it container-id /bin/bash
+
+source activate gaussian_splatting
+pip install simple-knn/
+pip install diff-gaussian-rasterization/
