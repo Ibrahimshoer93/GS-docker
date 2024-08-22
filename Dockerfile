@@ -34,12 +34,18 @@ WORKDIR /workspace/gaussian-splatting
 COPY environment.yml .
 RUN conda env create --file environment.yml
 
+
 # Copy the API directory and app.py
 COPY api /workspace/gaussian-splatting/api
 
 # Ensure the environment is activated correctly
 SHELL ["conda", "run", "-n", "gaussian_splatting", "/bin/bash", "-c"]
+# Copy and set permissions for the entrypoint script
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
+# Set the entrypoint
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 # Expose the port the API will run on
 EXPOSE 5000
 
