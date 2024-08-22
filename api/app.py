@@ -41,9 +41,9 @@ def run_training_endpoint():
 @app.route('/status', methods=['GET'])
 def status():
     if training_lock.locked():
-        return jsonify({"status": "busy"})
+        return jsonify({"status": "busy"}), 500
     else:
-        return jsonify({"status": "idle"})
+        return jsonify({"status": "idle"}), 200
 
 @app.route('/health', methods=['GET'])
 def health():
