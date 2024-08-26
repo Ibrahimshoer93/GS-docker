@@ -2,25 +2,33 @@ from flask import Flask, request, jsonify
 import subprocess
 import os
 import threading
+import shutil
 
 app = Flask(__name__)
 training_lock = threading.Lock()
+def run_training(folder_path, additional_args):
 
-def run_training(folder_path):
-    command = f"python train.py -s {folder_path} --model_path {folder_path}/output/"
+    # Build the command with additional arguments
+    command_args = " ".join([f"--{key} {value}" for key, value in additional_args.items()])
+    command = f"python train.py -s {folder_path} {command_args} --model_path {folder_path}/output/"
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
+
+
     return stdout.decode(), stderr.decode()
 
 @app.route('/run-training', methods=['POST'])
 def run_training_endpoint():
     if training_lock.locked():
-        return jsonify({"error": "Server is currently busy"}), 429
+        return jsonify({"error": "Server is currently busy"}), 503
 
     data = request.json
     folder_path = data.get('folder_path')
     if not folder_path:
         return jsonify({"error": "Folder path is required"}), 400
+
+    # Extract additional arguments from the request, default to empty if not provided
+    additional_args = data.get('args', {})
 
     # Prefix the folder_path with the mounted directory path
     full_path = os.path.join("/workspace/data", folder_path)
@@ -30,8 +38,8 @@ def run_training_endpoint():
 
     training_lock.acquire()
     try:
-        # Run the training command
-        stdout, stderr = run_training(full_path)
+        # Run the training command with additional arguments
+        stdout, stderr = run_training(full_path,additional_args)
         if stderr:
             return jsonify({"error": stderr}), 500
         return jsonify({"message": "Training completed", "output": stdout})
@@ -41,7 +49,7 @@ def run_training_endpoint():
 @app.route('/status', methods=['GET'])
 def status():
     if training_lock.locked():
-        return jsonify({"status": "busy"}), 500
+        return jsonify({"status": "busy"}), 503
     else:
         return jsonify({"status": "idle"}), 200
 

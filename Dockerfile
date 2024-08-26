@@ -43,7 +43,8 @@ SHELL ["conda", "run", "-n", "gaussian_splatting", "/bin/bash", "-c"]
 # Copy and set permissions for the entrypoint script
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
-
+#RUN apt-get update -y && apt-get install -y \
+#     sudo
 # Set the entrypoint
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 # Expose the port the API will run on
