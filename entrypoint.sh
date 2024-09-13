@@ -17,9 +17,9 @@ else
 fi
 
 # Any other setup tasks can be added here
-pip install ./submodules/simple-knn/
-pip install ./submodules/diff-gaussian-rasterization
-conda install -c conda-forge opencv -y
+pip install ./gaussian-splatting/submodules/simple-knn/
+pip install ./gaussian-splatting/submodules/diff-gaussian-rasterization
+#conda install -c conda-forge opencv -y
 
 # Execute the command passed to the Docker container
 echo "Executing command: $@"

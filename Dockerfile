@@ -28,7 +28,6 @@ RUN nvcc --version
 # Clone the Gaussian Splatting repository
 WORKDIR /workspace
 RUN git clone https://github.com/graphdeco-inria/gaussian-splatting --recursive
-
 # Create and activate the Conda environment
 WORKDIR /workspace/gaussian-splatting
 COPY environment.yml .
@@ -49,7 +48,8 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 # Expose the port the API will run on
 EXPOSE 5000
-
+WORKDIR /workspace
+RUN git clone https://github.com/3DGS-FLoD/flod.git
 # Start the Flask API
 CMD ["bash", "-c", "source activate gaussian_splatting && python /workspace/gaussian-splatting/api/app.py"]
 

@@ -6,11 +6,14 @@ import shutil
 
 app = Flask(__name__)
 training_lock = threading.Lock()
-def run_training(folder_path, additional_args):
+def run_training(folder_path, additional_args,method):
 
     # Build the command with additional arguments
     command_args = " ".join([f"--{key} {value}" for key, value in additional_args.items()])
-    command = f"python train.py -s {folder_path} {command_args} --model_path {folder_path}/output/"
+    if method == "flod":
+    	command = f"python flod/train.py -s {folder_path} {command_args} --model_path {folder_path}/output_flod/"
+    else:
+    	command = f"python gaussian-splatting/train.py -s {folder_path} {command_args} --model_path {folder_path}/output/"
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
 
@@ -29,7 +32,7 @@ def run_training_endpoint():
 
     # Extract additional arguments from the request, default to empty if not provided
     additional_args = data.get('args', {})
-
+    method = data.get('method', "")
     # Prefix the folder_path with the mounted directory path
     full_path = os.path.join("/workspace/data", folder_path)
 
@@ -39,7 +42,7 @@ def run_training_endpoint():
     training_lock.acquire()
     try:
         # Run the training command with additional arguments
-        stdout, stderr = run_training(full_path,additional_args)
+        stdout, stderr = run_training(full_path,additional_args,method)
         if stderr:
             return jsonify({"error": stderr}), 500
         return jsonify({"message": "Training completed", "output": stdout})

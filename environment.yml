@@ -14,3 +14,5 @@ dependencies:
   - tqdm
   - pip:
     - Flask
+    - open3d
+    - opencv-python
