@@ -1,8 +1,10 @@
+# Gaussian Splatting on Linux:
+
 Usage:
 linux:
-curl -X POST http://192.168.168.141:5000/run-training -H "Content-Type: application/json" -d '{"folder_path": "folder_name"}'
+curl -X POST http://url:5000/run-training -H "Content-Type: application/json" -d '{"folder_path": "folder_name"}'
 Win:
-curl -X POST http://192.168.168.141:5000/run-training -H "Content-Type: application/json" -d "{\"folder_path\": \"folder_name\"}"
+curl -X POST http://url:5000/run-training -H "Content-Type: application/json" -d "{\"folder_path\": \"folder_name\"}"
 
 "folder_name" should be in capoom_storage/Projects/gs-data/
 it should include images/ and sparse/
